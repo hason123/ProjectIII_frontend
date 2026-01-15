@@ -12,7 +12,7 @@ import AdminSidebar from "../../components/layout/AdminSidebar";
 import BookCard from "../../components/book/BookCard";
 import BookFilters from "../../components/book/BookFilters";
 
-// Hàm tiện ích để sửa lỗi URL ảnh
+// 1. Hàm tiện ích để sửa lỗi URL ảnh (Giống hệt BooksPage)
 const getValidImageUrl = (url) => {
   if (!url) return "https://via.placeholder.com/300x400?text=No+Image";
   if (url.includes("https://res-https://")) {
@@ -25,7 +25,7 @@ export default function LibrarianBooks({ isAdmin = false }) {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  // Xác định role
+  // Xác định role để điều hướng đúng URL
   const userRolePath = isAdmin || user?.role === "ADMIN" ? "admin" : "librarian";
 
   // --- STATE ---
@@ -34,7 +34,7 @@ export default function LibrarianBooks({ isAdmin = false }) {
   const [error, setError] = useState(null);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(12); // Mặc định 12 cho đẹp Grid
   const [totalElements, setTotalElements] = useState(0);
 
   const [currentFilters, setCurrentFilters] = useState({
@@ -112,7 +112,7 @@ export default function LibrarianBooks({ isAdmin = false }) {
     navigate(`/${userRolePath}/books/create`);
   };
 
-  // Hàm chuyển hướng chung cho mọi nút trên Card
+  // Hàm chuyển hướng sang trang Chi tiết dành cho Admin
   const handleGoToDetail = (bookId) => {
     navigate(`/${userRolePath}/books/${bookId}`);
   };
@@ -134,7 +134,7 @@ export default function LibrarianBooks({ isAdmin = false }) {
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
                 <div>
                   <h1 className="text-2xl md:text-3xl font-bold text-[#111418] dark:text-white">
-                    {isAdmin ? "Quản lý kho sách" : "Thư viện sách"}
+                    {isAdmin ? "Quản lý kho sách" : "Sách của tôi"}
                   </h1>
                   <p className="text-slate-600 dark:text-slate-400 mt-1">
                     Quản lý, tìm kiếm và cập nhật sách trong hệ thống.
@@ -151,13 +151,12 @@ export default function LibrarianBooks({ isAdmin = false }) {
                 </Button>
               </div>
 
-              {/* 2. BOOK FILTERS (ĐƯA LÊN TRÊN) */}
-              {/* Chúng ta bọc nó trong một div full-width thay vì để trong aside cột bên trái */}
+              {/* 2. BOOK FILTERS (Bộ lọc ngang) */}
               <div className="mb-8 w-full">
                 <BookFilters onFilterChange={handleFilterChange} />
               </div>
 
-              {/* 3. INFO BAR (Kết quả & Số lượng hiển thị) */}
+              {/* 3. INFO BAR */}
               <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4 bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
                 <h2 className="text-lg font-bold text-[#111418] dark:text-white flex items-center gap-2">
                   Kết quả: <span className="text-primary">{totalElements}</span> sách
@@ -171,17 +170,16 @@ export default function LibrarianBooks({ isAdmin = false }) {
                       value={pageSize}
                       onChange={handlePageSizeChange}
                       options={[
-                        { value: 12, label: "12 sách / trang" }, // 3 hàng (nếu màn hình 4 cột)
-                        { value: 24, label: "24 sách / trang" }, // 6 hàng
-                        { value: 48, label: "48 sách / trang" }, // 12 hàng
-                        { value: 100, label: "100 sách / trang" }, // Xem nhiều
+                        { value: 12, label: "12 sách / trang" },
+                        { value: 24, label: "24 sách / trang" },
+                        { value: 48, label: "48 sách / trang" },
                       ]}
                       className="w-40"
                   />
                 </div>
               </div>
 
-              {/* 4. BOOK GRID (Hiển thị danh sách) */}
+              {/* 4. BOOK GRID (Hiển thị giống BooksPage) */}
               {loading ? (
                   <div className="flex justify-center items-center h-96">
                     <Spin size="large" tip="Đang tải dữ liệu..." />
@@ -196,25 +194,29 @@ export default function LibrarianBooks({ isAdmin = false }) {
                   </div>
               ) : (
                   <>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-10">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-10">
                       {books.map((book) => (
                           <BookCard
                               key={book.bookId || book.id}
                               id={book.bookId || book.id}
-                              type="librarian" // Vẫn giữ type này để dùng style của admin
+
+                              // BỎ type="librarian" để dùng giao diện Student đẹp hơn (như bạn yêu cầu trước đó)
+                              // type="librarian"
+
                               title={book.bookName || book.title}
                               author={book.author || "Chưa cập nhật"}
                               image={getValidImageUrl(book.imageUrl || book.avatar)}
+
+                              // [QUAN TRỌNG] Truyền list categories vào đây
+                              categories={book.categories}
+
                               status={book.quantity > 0 ? "active" : "archived"}
                               code={book.bookId}
                               studentsCount={book.quantity || 0}
                               schedule="Sách in"
 
-                              // QUAN TRỌNG: Tất cả các props hành động đều trỏ về 1 hàm duy nhất
-                              // Điều này giúp dù BookCard có 2 nút hay 1 nút thì đều dẫn về trang Detail
+                              // Click vào thì chuyển trang quản lý
                               onPreview={() => handleGoToDetail(book.bookId || book.id)}
-                              onManage={() => handleGoToDetail(book.bookId || book.id)}
-                              onEdit={() => handleGoToDetail(book.bookId || book.id)}
                           />
                       ))}
                     </div>

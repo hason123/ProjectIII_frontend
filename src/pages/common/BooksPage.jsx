@@ -179,6 +179,7 @@ export default function BooksPage() {
                               author={c.author || "Chưa rõ tác giả"}
                               // Sử dụng hàm getValidImageUrl ở đây
                               image={getValidImageUrl(c.imageUrl || c.avatar)}
+                              categories={c.categories}
                               rating={c.rating || 0}
                               reviews={c.reviewCount?.toString() || "0"}
                           />

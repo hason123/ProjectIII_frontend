@@ -4,7 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="dee99b54-34f2-4b85-8eec-343da8dfd5e6" name="Changes" comment="" />
+    <list default="true" id="dee99b54-34f2-4b85-8eec-343da8dfd5e6" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/src/components/book/BookCard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/book/BookCard.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/common/BooksPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/common/BooksPage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/librarian/LibrarianBooks.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/librarian/LibrarianBooks.jsx" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -13,6 +17,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "hason123"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/hason123/ProjectIII_frontend.git",
+    "accountId": "7fd0328d-0483-4104-8a70-194a52659723"
+  }
+}]]></component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
   &quot;associatedIndex&quot;: 3
@@ -56,7 +72,7 @@
       <updated>1768466046747</updated>
       <workItem from="1768466048644" duration="147000" />
       <workItem from="1768466214147" duration="90000" />
-      <workItem from="1768466306517" duration="28046000" />
+      <workItem from="1768466306517" duration="29757000" />
     </task>
     <servers />
   </component>
