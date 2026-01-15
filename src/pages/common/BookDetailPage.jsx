@@ -6,6 +6,7 @@ import BookTabs from "../../components/book/BookTabs";
 import DescriptionBook from "../../components/book/DescriptionBook";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
+import { requestBorrowing } from "../../api/book"; // Import API
 import { getBookById, deleteBook } from "../../api/book"; // Thêm deleteBook
 import { Spin, Alert, Modal, Button, message, Tag } from "antd";
 import {
@@ -73,34 +74,54 @@ export default function BookDetailPage() {
 
   // --- HÀM XỬ LÝ CHO SINH VIÊN ---
   const handleBorrowBook = () => {
+    // 1. Kiểm tra đăng nhập
     if (!user) {
-      message.warning("Vui lòng đăng nhập để mượn sách");
+      message.warning("Vui lòng đăng nhập để thực hiện chức năng này");
       return;
     }
+
+    // 2. Kiểm tra số lượng sách
     if (book.quantity <= 0) {
       message.error("Sách này hiện đã hết hàng trong kho.");
       return;
     }
 
+    // 3. Hiển thị Modal xác nhận
     Modal.confirm({
       title: "Xác nhận mượn sách",
+      icon: <BookmarkSquareIcon className="w-6 h-6 text-blue-500 mr-2 inline" />,
       content: (
-          <div>
-            <p>Bạn có chắc chắn muốn mượn cuốn sách này không?</p>
-            <p className="font-bold text-gray-800 mt-2">{book.bookName}</p>
+          <div className="pt-2">
+            <p>Bạn có chắc chắn muốn gửi yêu cầu mượn cuốn sách:</p>
+            <p className="font-bold text-[#111418] mt-1 text-md bg-gray-50 p-2 rounded border border-gray-200">
+              {book.bookName}
+            </p>
+            <p className="text-xs text-gray-500 mt-3 italic">
+              * Yêu cầu sẽ được gửi đến Thủ thư. Vui lòng theo dõi trạng thái trong mục "Lịch sử mượn".
+            </p>
           </div>
       ),
-      okText: "Xác nhận mượn",
-      cancelText: "Hủy",
+      okText: "Gửi yêu cầu",
+      cancelText: "Hủy bỏ",
+      centered: true,
+      okButtonProps: { type: "primary" },
       onOk: async () => {
         try {
           setBorrowing(true);
-          // TODO: Gọi API mượn sách thật ở đây (ví dụ: await enrollBook(id))
-          await new Promise(resolve => setTimeout(resolve, 1000));
-          message.success("Đã gửi yêu cầu mượn sách thành công!");
+
+          // --- GỌI API MƯỢN SÁCH ---
+          // Truyền vào ID của sách (book.bookId hoặc id từ useParams)
+          await requestBorrowing(book.bookId);
+
+          message.success("Gửi yêu cầu thành công! Vui lòng chờ Thủ thư phê duyệt.");
+
+          // Tải lại thông tin sách để cập nhật số lượng hiển thị (nếu backend trừ tồn kho tạm thời)
           fetchBook();
+
         } catch (err) {
-          message.error(err.message || "Lỗi khi mượn sách");
+          console.error("Lỗi mượn sách:", err);
+          // Hiển thị thông báo lỗi cụ thể từ Backend (ví dụ: "Bạn đã mượn cuốn này rồi")
+          message.error(err.message || "Không thể gửi yêu cầu mượn sách. Vui lòng thử lại.");
         } finally {
           setBorrowing(false);
         }
@@ -285,7 +306,7 @@ export default function BookDetailPage() {
                             Đăng ký mượn sách
                           </h3>
                           <p className="text-sm text-blue-700 dark:text-blue-300">
-                            Mượn tối đa 14 ngày. Vui lòng mang thẻ sinh viên khi đến nhận sách.
+                            Mượn tối đa 30 ngày. Vui lòng mang thẻ sinh viên khi đến nhận sách.
                           </p>
                         </div>
                         <Button

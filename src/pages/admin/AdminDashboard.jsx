@@ -26,7 +26,7 @@ export default function AdminDashboard() {
       icon: UserGroupIcon,
     },
     {
-      label: "Số sách đang hoạt động",
+      label: "Số sách trong lưu trữ",
       value: "...",
       change: "+0%",
       changeType: "positive",

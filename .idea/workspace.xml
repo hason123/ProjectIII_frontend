@@ -4,10 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="dee99b54-34f2-4b85-8eec-343da8dfd5e6" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/src/components/book/BookCard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/book/BookCard.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/common/BooksPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/common/BooksPage.jsx" afterDir="false" />
+    <list default="true" id="dee99b54-34f2-4b85-8eec-343da8dfd5e6" name="Changes" comment="cập nhật giao diện Book">
+      <change beforePath="$PROJECT_DIR$/src/App.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/api/book.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/book.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/admin/AdminDashboard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/admin/AdminDashboard.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/common/BookDetailPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/common/BookDetailPage.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/pages/librarian/LibrarianBooks.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/librarian/LibrarianBooks.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/librarian/LibrarianStudentManagement.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/librarian/LibrarianBorrowingManagement.jsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -72,11 +75,24 @@
       <updated>1768466046747</updated>
       <workItem from="1768466048644" duration="147000" />
       <workItem from="1768466214147" duration="90000" />
-      <workItem from="1768466306517" duration="29757000" />
+      <workItem from="1768466306517" duration="38197000" />
     </task>
+    <task id="LOCAL-00001" summary="cập nhật giao diện Book">
+      <option name="closed" value="true" />
+      <created>1768507687361</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1768507687361</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="cập nhật giao diện Book" />
+    <option name="LAST_COMMIT_MESSAGE" value="cập nhật giao diện Book" />
   </component>
 </project>

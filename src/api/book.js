@@ -407,7 +407,7 @@ export async function getBookEnrollments(bookId, pageNumber = 1, pageSize = 10) 
   return await response.json();
 }
 
-export async function approveEnrollment(studentId, bookId) {
+export async function approveEnrollment(userId, bookId) {
   const token = localStorage.getItem("accessToken");
   const response = await fetch(
     `${API_URL}/enrollments/approve`,
@@ -432,7 +432,7 @@ export async function approveEnrollment(studentId, bookId) {
   return await response.json();
 }
 
-export async function rejectEnrollment(studentId, bookId) {
+export async function rejectEnrollment(userId, bookId) {
   const token = localStorage.getItem("accessToken");
   const response = await fetch(
     `${API_URL}/enrollments/reject`,
@@ -539,17 +539,17 @@ export async function getStudentsNotInBook(bookId, searchRequest = {}, pageNumbe
 export async function addStudentsToBook(bookId, studentIds) {
   const token = localStorage.getItem("accessToken");
   const response = await fetch(
-    `${API_URL}/books/${bookId}/students`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        studentIds: studentIds,
-      }),
-    }
+      `${API_URL}/books/${bookId}/students`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          studentIds: studentIds,
+        }),
+      }
   );
 
   if (!response.ok) {
@@ -562,6 +562,151 @@ export async function addStudentsToBook(bookId, studentIds) {
   if (contentType && contentType.includes("application/json")) {
     return await response.json();
   } else {
-    return { message: await response.text() };
+    return {message: await response.text()};
   }
 }
+  /* --- QUẢN LÝ MƯỢN SÁCH (BORROWING MANAGEMENT) --- */
+
+  /**
+   * Sinh viên gửi yêu cầu mượn sách
+   * Controller: @PostMapping("/books/{bookId}/borrow")
+   */
+  export async function requestBorrowing(bookId) {
+    const token = localStorage.getItem("accessToken");
+    const response = await fetch(`${API_URL}/books/${bookId}/borrow`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || "Không thể gửi yêu cầu mượn sách");
+    }
+
+    return await response.json();
+  }
+
+  /**
+   * Thủ thư duyệt yêu cầu mượn sách
+   * Controller: @PostMapping("/borrowings/approve")
+   */
+  export async function approveBorrowing(userId, bookId) {
+    const token = localStorage.getItem("accessToken");
+    const response = await fetch(`${API_URL}/borrowings/approve`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        userId,
+        bookId,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || "Không thể duyệt yêu cầu mượn");
+    }
+
+    return await response.json();
+  }
+
+  /**
+   * Thủ thư từ chối yêu cầu mượn sách
+   * Controller: @DeleteMapping("/borrowings/reject")
+   */
+  export async function rejectBorrowing(userId, bookId) {
+    const token = localStorage.getItem("accessToken");
+    const response = await fetch(`${API_URL}/borrowings/reject`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        userId,
+        bookId,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || "Không thể từ chối yêu cầu mượn");
+    }
+
+    // Trả về true nếu xóa thành công (204 No Content)
+    if (response.status === 204) return true;
+    return await response.json();
+  }
+
+  /**
+   * Lấy chi tiết một lượt mượn sách
+   * Controller: @GetMapping("/borrowings/{id}")
+   */
+  export async function getBorrowingDetail(id) {
+    const token = localStorage.getItem("accessToken");
+    const response = await fetch(`${API_URL}/borrowings/${id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Không thể lấy chi tiết lượt mượn");
+    }
+
+    return await response.json();
+  }
+
+  /**
+   * Lấy danh sách tất cả lượt mượn (Dành cho Thủ thư/Admin)
+   * Controller: @GetMapping("/borrowings")
+   */
+  export async function getBorrowingPage(pageNumber = 1, pageSize = 10) {
+    const token = localStorage.getItem("accessToken");
+    const response = await fetch(
+        `${API_URL}/borrowings?pageNumber=${pageNumber}&pageSize=${pageSize}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+    );
+
+    if (!response.ok) {
+      throw new Error("Không thể lấy danh sách lượt mượn");
+    }
+
+    return await response.json();
+  }
+
+  /**
+   * Xóa một lượt mượn sách
+   * Controller: @DeleteMapping("/borrowings/{id}")
+   */
+  export async function deleteBorrowing(id) {
+    const token = localStorage.getItem("accessToken");
+    const response = await fetch(`${API_URL}/borrowings/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || "Không thể xóa lượt mượn");
+    }
+
+    if (response.status === 204) return true;
+    return await response.json();
+  }

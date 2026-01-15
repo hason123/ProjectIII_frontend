@@ -134,7 +134,7 @@ export default function LibrarianBooks({ isAdmin = false }) {
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
                 <div>
                   <h1 className="text-2xl md:text-3xl font-bold text-[#111418] dark:text-white">
-                    {isAdmin ? "Quản lý kho sách" : "Sách của tôi"}
+                    {isAdmin ? "Quản lý kho sách" : "Thư viện sách"}
                   </h1>
                   <p className="text-slate-600 dark:text-slate-400 mt-1">
                     Quản lý, tìm kiếm và cập nhật sách trong hệ thống.

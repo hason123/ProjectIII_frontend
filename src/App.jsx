@@ -21,7 +21,7 @@ import CreateChapter from "./pages/librarian/CreateChapter";
 import LectureDetail from "./pages/librarian/LectureDetail";
 import LibrarianProfilePage from "./pages/librarian/LibrarianProfilePage";
 import LibrarianSettingsPage from "./pages/librarian/LibrarianSettingsPage";
-import LibrarianStudentManagement from "./pages/librarian/LibrarianStudentManagement";
+import LibrarianBorrowingManagement from "./pages/librarian/LibrarianBorrowingManagement";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminUserManagement from "./pages/admin/AdminUserManagement";
 import AdminProfilePage from "./pages/admin/AdminProfilePage";
@@ -329,7 +329,7 @@ function App() {
             path="/librarian/students"
             element={
               <ProtectedRoute
-                element={<LibrarianStudentManagement />}
+                element={<LibrarianBorrowingManagement />}
                 allowedRoles={["LIBRARIAN"]}
               />
             }
@@ -493,7 +493,7 @@ function App() {
             path="/admin/students"
             element={
               <ProtectedRoute
-                element={<LibrarianStudentManagement isAdmin={true} />}
+                element={<LibrarianBorrowingManagement isAdmin={true} />}
                 allowedRoles={["ADMIN"]}
               />
             }
