@@ -64,50 +64,6 @@ export default function MyInformation({
     }
   };
 
-/*  const handleSave = async () => {
-    setLoading(true);
-    setError("");
-    setSuccess("");
-    try {
-      if (!user?.id) throw new Error("User ID not found");
-
-      // Gửi dữ liệu cập nhật lên server
-      const updatedUser = await updateUser(user.id, {
-        ...formData,
-        userName: initialData?.userName, // Giữ nguyên userName vì nó là unique
-      });
-
-      if (avatarFile) {
-        await uploadUserAvatar(user.id, avatarFile);
-      }
-
-      const fullUserData = updatedUser.data || updatedUser;
-      setInitialData(fullUserData);
-      if (onUpdate) onUpdate(fullUserData);
-
-      // Cập nhật Zustand Store
-      updateUserStoreData({
-        fullName: fullUserData.fullName,
-        gmail: fullUserData.gmail,
-        phoneNumber: fullUserData.phoneNumber,
-        birthday: fullUserData.birthday,
-        address: fullUserData.address,
-        imageUrl: fullUserData.imageUrl,
-        userName: fullUserData.userName,
-      });
-
-      setSuccess("Cập nhật thông tin thành công!");
-      setIsEditing(false);
-      setAvatarFile(null);
-      setTimeout(() => setSuccess(""), 3000);
-    } catch (err) {
-      setError("Cập nhật thất bại. Vui lòng thử lại.");
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };*/
-
   const handleSave = async () => {
     setLoading(true);
     setError("");

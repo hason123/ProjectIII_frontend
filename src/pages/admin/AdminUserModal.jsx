@@ -243,7 +243,7 @@ export default function AdminUserModal({
               disabled={mode === "view"}
             />
           </div>
-          {mode !== "create" && (
+          {/*{mode !== "create" && (
             <div className="space-y-2">
               <label className="text-sm font-semibold text-gray-600 dark:text-gray-400">Trạng thái</label>
               <Select
@@ -258,7 +258,7 @@ export default function AdminUserModal({
                 ]}
               />
             </div>
-          )}
+          )}*/}
         </div>
 
         {/* Footer Actions */}

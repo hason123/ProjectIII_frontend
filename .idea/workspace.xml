@@ -5,12 +5,44 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="dee99b54-34f2-4b85-8eec-343da8dfd5e6" name="Changes" comment="cập nhật giao diện Book">
+      <change afterPath="$PROJECT_DIR$/src/pages/librarian/CreateCategory.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/App.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/api/book.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/book.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/api/category.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/category.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/api/chapter.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/api/lesson.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/api/lessonComment.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/api/quiz.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/api/resource.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/book/BookCard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/book/BookCard.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/book/BookContent.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/book/LibrarianTab.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/book/ReviewTab.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/layout/AdminSidebar.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/layout/AdminSidebar.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/layout/LibrarianSidebar.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/layout/LibrarianSidebar.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/lesson/LessonComments.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/librarian/AddStudentModal.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/student/profile/MyBooks.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/student/profile/MyBooks.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/student/profile/MyInformation.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/student/profile/MyInformation.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/i18n/locales/en.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/i18n/locales/en.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/i18n/locales/vi.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/i18n/locales/vi.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/pages/admin/AdminDashboard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/admin/AdminDashboard.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/common/BookDetailPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/common/BookDetailPage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/admin/AdminUserManagement.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/admin/AdminUserManagement.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/admin/AdminUserModal.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/admin/AdminUserModal.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/librarian/CreateBook.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/librarian/CreateBook.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/librarian/CreateChapter.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/librarian/LectureDetail.jsx" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/pages/librarian/LibrarianBooks.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/librarian/LibrarianBooks.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/librarian/LibrarianStudentManagement.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/librarian/LibrarianBorrowingManagement.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/librarian/LibrarianBorrowingManagement.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/librarian/LibrarianBorrowingManagement.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/librarian/QuizDetail.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/student/QuizAttempt.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/student/QuizDetail.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/student/QuizResult.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/student/StudentLectureDetail.jsx" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -20,18 +52,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "hason123"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;hason123&quot;
   }
-}]]></component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/hason123/ProjectIII_frontend.git",
-    "accountId": "7fd0328d-0483-4104-8a70-194a52659723"
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/hason123/ProjectIII_frontend.git&quot;,
+    &quot;accountId&quot;: &quot;7fd0328d-0483-4104-8a70-194a52659723&quot;
   }
-}]]></component>
+}</component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
   &quot;associatedIndex&quot;: 3
@@ -44,8 +76,10 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "Node.js.ProtectedRoute.jsx.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager": "true",
+    "RunOnceActivity.git.unshallow": "true",
     "git-widget-placeholder": "master",
     "ignore.virus.scanning.warn.message": "true",
     "last_opened_file_path": "D:/HASON/2025.1/ProjectIII_frontend",
@@ -75,7 +109,9 @@
       <updated>1768466046747</updated>
       <workItem from="1768466048644" duration="147000" />
       <workItem from="1768466214147" duration="90000" />
-      <workItem from="1768466306517" duration="38197000" />
+      <workItem from="1768466306517" duration="44332000" />
+      <workItem from="1768535668877" duration="588000" />
+      <workItem from="1768552345413" duration="9951000" />
     </task>
     <task id="LOCAL-00001" summary="cập nhật giao diện Book">
       <option name="closed" value="true" />
@@ -85,7 +121,15 @@
       <option name="project" value="LOCAL" />
       <updated>1768507687361</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="cập nhật giao diện Book">
+      <option name="closed" value="true" />
+      <created>1768519272534</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1768519272534</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

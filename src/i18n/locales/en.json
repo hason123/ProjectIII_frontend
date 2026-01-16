@@ -177,10 +177,11 @@
   "librarian": {
     "tongQuan": "Dashboard",
     "quanLyLuotMuon": "Manage Books",
-    "quanLySach": "Manage Students",
+    "quanLySach": "Manage Borrrowings",
     "baoCoThongKe": "Reports/Analytics",
     "hoSo": "Profile",
-    "caiDatHeThong": "System Settings"
+    "caiDatHeThong": "System Settings",
+    "quanLyDanhMuc": "Manage Categories"
   },
   "admin": {
     "tongQuan": "Dashboard",
@@ -188,6 +189,7 @@
     "quanLyLuotMuon": "Book Management",
     "thongKe": "Analytics",
     "hoSo": "Profile",
-    "caiDat": "Settings"
+    "caiDat": "Settings",
+    "quanLyDanhMuc": "Manage Categories"
   }
 }

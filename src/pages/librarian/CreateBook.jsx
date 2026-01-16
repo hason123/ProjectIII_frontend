@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Form, Input, InputNumber, Select, Spin, Alert, Button, message, Modal, Upload } from "antd";
+import {Form, Input, InputNumber, Select, Spin, Alert, Button, message, Modal, Upload, Tabs} from "antd";
 import { useAuth } from "../../contexts/AuthContext";
 import {
   ArrowLeftIcon,
@@ -8,7 +8,7 @@ import {
   TrashIcon,
 } from "@heroicons/react/24/outline";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
-
+import { LinkOutlined, CloudUploadOutlined } from "@ant-design/icons"; // Import Icons
 // Import Layouts
 import LibrarianHeader from "../../components/layout/LibrarianHeader";
 import LibrarianSidebar from "../../components/layout/LibrarianSidebar";
@@ -46,7 +46,7 @@ export default function CreateBook() {
   const [imageFile, setImageFile] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
   const [bookData, setBookData] = useState(null); // Lưu dữ liệu gốc để so sánh nếu cần
-
+  const [imageTab, setImageTab] = useState("upload");
   // UI State
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
@@ -88,7 +88,8 @@ export default function CreateBook() {
             language: data.language || "Tiếng Việt",
             bookDesc: data.bookDesc || data.description,
             // Nếu API trả về mảng categories, lấy ID của cái đầu tiên hoặc map lại
-            categoryId: data.categories?.[0]?.categoryId || data.categoryId,
+            categoryIds: data.categories?.map(cat => cat.categoryId || cat.id) || [],
+            imageUrl: data.imageUrl
           });
 
           // Set ảnh preview từ server
@@ -116,14 +117,21 @@ export default function CreateBook() {
     }
   };
 
-  // --- 4. SUBMIT FORM (CREATE / UPDATE) ---
+  const handleUrlChange = (e) => {
+    const url = e.target.value;
+    if (url) {
+      setPreviewImage(url);
+      setImageFile(null); // Xóa file upload nếu người dùng chuyển sang dùng link
+    }
+  };
+
   const onFinish = async (values) => {
     setSubmitting(true);
     setError(null);
     try {
       let currentBookId = id;
 
-      // Prepare Payload (Map đúng tên trường theo DTO BookRequest)
+      // Prepare Payload
       const payload = {
         bookName: values.bookName,
         author: values.author,
@@ -132,40 +140,36 @@ export default function CreateBook() {
         pageCount: values.pageCount,
         language: values.language,
         bookDesc: values.bookDesc,
-        // Backend nhận List<Integer> categoryIds, nhưng form đang chọn 1
-        categoryIds: values.categoryId ? [values.categoryId] : [],
+        categoryIds: values.categoryIds || [],
+        // MỚI: Gửi imageUrl nếu đang ở tab 'url'
+        imageUrl: imageTab === "url" ? values.imageUrl : null,
       };
 
       if (isEditMode) {
-        // --- UPDATE ---
         await updateBook(currentBookId, payload);
-        message.success("Cập nhật thông tin sách thành công!");
+        message.success("Cập nhật sách thành công!");
       } else {
-        // --- CREATE ---
         const res = await createBook(payload);
-        // Lấy ID sách vừa tạo để upload ảnh
         currentBookId = res.data?.bookId || res.bookId || res.id;
         message.success("Tạo sách mới thành công!");
       }
 
-      // --- UPLOAD IMAGE (Nếu có chọn ảnh mới) ---
-      if (imageFile && currentBookId) {
+      // Logic Upload File: Chỉ chạy nếu đang ở tab 'upload' VÀ có file
+      if (imageTab === "upload" && imageFile && currentBookId) {
         try {
           await uploadBookImage(currentBookId, imageFile);
-          message.success("Đã cập nhật ảnh bìa sách.");
+          message.success("Đã cập nhật ảnh bìa từ file.");
         } catch (imgErr) {
           console.error(imgErr);
-          message.warning("Sách đã lưu nhưng lỗi tải ảnh. Vui lòng thử lại ảnh.");
+          message.warning("Lỗi upload file ảnh.");
         }
       }
 
-      // --- NAVIGATE BACK ---
       navigate(`/${userRole}/books`);
 
     } catch (err) {
       console.error(err);
-      setError(err.message || "Có lỗi xảy ra khi lưu sách.");
-      window.scrollTo(0, 0);
+      setError(err.message || "Có lỗi xảy ra.");
     } finally {
       setSubmitting(false);
     }
@@ -201,6 +205,82 @@ export default function CreateBook() {
         </div>
     );
   }
+
+  const imageTabsItems = [
+    {
+      key: 'upload',
+      label: (<span><CloudUploadOutlined /> Tải lên</span>),
+      children: (
+          <div className="flex flex-col items-center">
+            <Upload
+                accept="image/*"
+                showUploadList={false}
+                beforeUpload={() => false}
+                onChange={handleImageChange}
+                className="w-full"
+            >
+              <div className="w-full aspect-[3/4] bg-gray-100 dark:bg-gray-900 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 flex flex-col items-center justify-center cursor-pointer hover:border-primary transition-colors overflow-hidden relative group">
+                {previewImage && imageTab === 'upload' ? (
+                    <>
+                      <img src={previewImage} alt="Book Cover" className="w-full h-full object-contain" />
+                      <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <span className="text-white font-medium flex items-center gap-2">
+                      <CloudArrowUpIcon className="w-5 h-5" /> Thay đổi
+                    </span>
+                      </div>
+                    </>
+                ) : (
+                    <div className="text-gray-400 flex flex-col items-center">
+                      <PlusOutlined className="text-3xl mb-2" />
+                      <span>Tải ảnh lên</span>
+                    </div>
+                )}
+              </div>
+            </Upload>
+            <p className="text-xs text-gray-500 mt-3 text-center">
+              Định dạng: JPG, PNG, WEBP. <br /> Tối đa: 5MB.
+            </p>
+          </div>
+      ),
+    },
+    {
+      key: 'url',
+      label: (<span><LinkOutlined /> Link ảnh</span>),
+      children: (
+          <div className="flex flex-col gap-3">
+            <Form.Item
+                name="imageUrl"
+                noStyle
+                rules={[{ type: 'url', message: "Vui lòng nhập đúng định dạng URL" }]}
+            >
+              <Input
+                  placeholder="https://example.com/image.png"
+                  onChange={handleUrlChange}
+                  prefix={<LinkOutlined />}
+              />
+            </Form.Item>
+
+            {/* Khu vực Preview cho Link */}
+            <div className="w-full aspect-[3/4] bg-gray-50 border border-gray-200 rounded-lg flex items-center justify-center overflow-hidden relative">
+              {previewImage ? (
+                  <img
+                      src={previewImage}
+                      alt="Preview"
+                      className="h-full object-contain"
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = "https://via.placeholder.com/150?text=Lỗi+Link";
+                      }}
+                  />
+              ) : (
+                  <span className="text-gray-400 text-sm">Xem trước ảnh</span>
+              )}
+            </div>
+            <p className="text-xs text-gray-400">Nhập link trực tiếp từ Internet.</p>
+          </div>
+      ),
+    },
+  ];
 
   return (
       <div className="min-h-screen bg-background-light dark:bg-background-dark font-display text-[#111418] dark:text-white">
@@ -256,44 +336,27 @@ export default function CreateBook() {
                   onFinish={onFinish}
                   className="grid grid-cols-1 lg:grid-cols-3 gap-8"
               >
-                {/* --- LEFT COLUMN: IMAGE UPLOAD --- */}
+                {/* --- LEFT COLUMN: IMAGE UPLOAD (ĐÃ CẬP NHẬT TABS) --- */}
                 <div className="lg:col-span-1 space-y-6">
                   <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
-                    <h3 className="font-bold text-lg mb-4">Ảnh bìa sách</h3>
-                    <div className="flex flex-col items-center">
-                      <Upload
-                          accept="image/*"
-                          showUploadList={false}
-                          beforeUpload={() => false} // Prevent auto upload
-                          onChange={handleImageChange}
-                          className="w-full"
-                      >
-                        <div className="w-full aspect-[3/4] bg-gray-100 dark:bg-gray-900 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 flex flex-col items-center justify-center cursor-pointer hover:border-primary transition-colors overflow-hidden relative group">
-                          {previewImage ? (
-                              <>
-                                <img
-                                    src={previewImage}
-                                    alt="Book Cover"
-                                    className="w-full h-full object-contain"
-                                />
-                                <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                              <span className="text-white font-medium flex items-center gap-2">
-                                <CloudArrowUpIcon className="w-5 h-5"/> Thay đổi
-                              </span>
-                                </div>
-                              </>
-                          ) : (
-                              <div className="text-gray-400 flex flex-col items-center">
-                                <PlusOutlined className="text-3xl mb-2" />
-                                <span>Tải ảnh lên</span>
-                              </div>
-                          )}
-                        </div>
-                      </Upload>
-                      <p className="text-xs text-gray-500 mt-3 text-center">
-                        Định dạng hỗ trợ: JPG, PNG, WEBP. <br/> Dung lượng tối đa: 5MB.
-                      </p>
-                    </div>
+                    <h3 className="font-bold text-lg mb-2">Ảnh bìa sách</h3>
+
+                    <Tabs
+                        defaultActiveKey="upload"
+                        activeKey={imageTab}
+                        onChange={(key) => {
+                          setImageTab(key);
+                          // Reset preview khi chuyển tab
+                          if (key === 'url') {
+                            const url = form.getFieldValue('imageUrl');
+                            if (url) setPreviewImage(url);
+                          } else {
+                            if (imageFile) setPreviewImage(URL.createObjectURL(imageFile));
+                            else if (bookData?.imageUrl) setPreviewImage(bookData.imageUrl);
+                          }
+                        }}
+                        items={imageTabsItems}
+                    />
                   </div>
                 </div>
 
@@ -330,10 +393,11 @@ export default function CreateBook() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <Form.Item
                           label="Thể loại"
-                          name="categoryId"
+                          name="categoryIds" // Đổi tên thành số nhiều
                           rules={[{ required: true, message: "Chọn thể loại sách" }]}
                       >
                         <Select
+                            mode="multiple" // Cho phép chọn nhiều
                             placeholder="Chọn danh mục"
                             options={categories}
                             showSearch

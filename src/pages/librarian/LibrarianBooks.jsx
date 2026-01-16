@@ -1,9 +1,13 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
-import { searchBooks } from "../../api/book";
-import { Spin, Alert, Pagination, Select, Button } from "antd";
+// --- MỚI: Thêm importBook, exportBook ---
+import { searchBooks, importBook, exportBook } from "../../api/book";
+// --- MỚI: Thêm Upload, message ---
+import { Spin, Alert, Pagination, Select, Button, Upload, message } from "antd";
 import { PlusCircleIcon } from "@heroicons/react/24/outline";
+// --- MỚI: Thêm Icon Import/Export ---
+import { DownloadOutlined, FileExcelOutlined, UploadOutlined } from "@ant-design/icons";
 
 // Layouts & Components
 import LibrarianHeader from "../../components/layout/LibrarianHeader";
@@ -12,7 +16,7 @@ import AdminSidebar from "../../components/layout/AdminSidebar";
 import BookCard from "../../components/book/BookCard";
 import BookFilters from "../../components/book/BookFilters";
 
-// 1. Hàm tiện ích để sửa lỗi URL ảnh (Giống hệt BooksPage)
+// 1. Hàm tiện ích để sửa lỗi URL ảnh
 const getValidImageUrl = (url) => {
   if (!url) return "https://via.placeholder.com/300x400?text=No+Image";
   if (url.includes("https://res-https://")) {
@@ -25,7 +29,6 @@ export default function LibrarianBooks({ isAdmin = false }) {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  // Xác định role để điều hướng đúng URL
   const userRolePath = isAdmin || user?.role === "ADMIN" ? "admin" : "librarian";
 
   // --- STATE ---
@@ -33,8 +36,12 @@ export default function LibrarianBooks({ isAdmin = false }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // --- MỚI: State cho Import/Export ---
+  const [isExporting, setIsExporting] = useState(false);
+  const [isImporting, setIsImporting] = useState(false);
+
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(12); // Mặc định 12 cho đẹp Grid
+  const [pageSize, setPageSize] = useState(12);
   const [totalElements, setTotalElements] = useState(0);
 
   const [currentFilters, setCurrentFilters] = useState({
@@ -112,9 +119,40 @@ export default function LibrarianBooks({ isAdmin = false }) {
     navigate(`/${userRolePath}/books/create`);
   };
 
-  // Hàm chuyển hướng sang trang Chi tiết dành cho Admin
   const handleGoToDetail = (bookId) => {
     navigate(`/${userRolePath}/books/${bookId}`);
+  };
+
+  // --- MỚI: Xử lý Export ---
+  const handleExportBooks = async () => {
+    setIsExporting(true);
+    try {
+      await exportBook();
+      message.success("Xuất file Excel thành công!");
+    } catch (err) {
+      console.error(err);
+      message.error("Xuất file thất bại: " + err.message);
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  // --- MỚI: Xử lý Import ---
+  const handleImportBooks = async (file) => {
+    setIsImporting(true);
+    try {
+      await importBook(file);
+      message.success("Nhập sách thành công! Đang làm mới danh sách...");
+
+      // Load lại danh sách ngay lập tức để thấy dữ liệu mới
+      await fetchBooksData(currentPage, pageSize, currentFilters);
+    } catch (err) {
+      console.error(err);
+      message.error("Nhập file thất bại: " + err.message);
+    } finally {
+      setIsImporting(false);
+    }
+    return false; // Chặn upload mặc định của antd
   };
 
   return (
@@ -130,8 +168,8 @@ export default function LibrarianBooks({ isAdmin = false }) {
           }`}>
             <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-7xl mx-auto">
 
-              {/* 1. Header Page */}
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+              {/* 1. Header Page: Title & Buttons */}
+              <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
                 <div>
                   <h1 className="text-2xl md:text-3xl font-bold text-[#111418] dark:text-white">
                     {isAdmin ? "Quản lý kho sách" : "Thư viện sách"}
@@ -140,18 +178,48 @@ export default function LibrarianBooks({ isAdmin = false }) {
                     Quản lý, tìm kiếm và cập nhật sách trong hệ thống.
                   </p>
                 </div>
-                <Button
-                    type="primary"
-                    size="large"
-                    icon={<PlusCircleIcon className="h-5 w-5" />}
-                    onClick={handleCreateBook}
-                    className="flex items-center gap-2 bg-primary font-bold hover:bg-primary/90 h-10 shadow-sm"
-                >
-                  Tạo sách mới
-                </Button>
+
+                {/* --- KHU VỰC NÚT BẤM (ĐÃ SỬA) --- */}
+                <div className="flex flex-wrap items-center gap-3">
+                  {/* Nút Export */}
+                  <Button
+                      icon={<DownloadOutlined />}
+                      onClick={handleExportBooks}
+                      loading={isExporting}
+                      className="h-10 border-gray-300 shadow-sm"
+                  >
+                    Export
+                  </Button>
+
+                  {/* Nút Import */}
+                  <Upload
+                      accept=".xlsx, .xls"
+                      showUploadList={false}
+                      beforeUpload={handleImportBooks}
+                  >
+                    <Button
+                        icon={<FileExcelOutlined />}
+                        loading={isImporting}
+                        className="h-10 border-gray-300 shadow-sm"
+                    >
+                      Import
+                    </Button>
+                  </Upload>
+
+                  {/* Nút Tạo Mới */}
+                  <Button
+                      type="primary"
+                      size="large"
+                      icon={<PlusCircleIcon className="h-5 w-5" />}
+                      onClick={handleCreateBook}
+                      className="flex items-center gap-2 bg-primary font-bold hover:bg-primary/90 h-10 shadow-sm"
+                  >
+                    Tạo sách mới
+                  </Button>
+                </div>
               </div>
 
-              {/* 2. BOOK FILTERS (Bộ lọc ngang) */}
+              {/* 2. BOOK FILTERS */}
               <div className="mb-8 w-full">
                 <BookFilters onFilterChange={handleFilterChange} />
               </div>
@@ -179,7 +247,7 @@ export default function LibrarianBooks({ isAdmin = false }) {
                 </div>
               </div>
 
-              {/* 4. BOOK GRID (Hiển thị giống BooksPage) */}
+              {/* 4. BOOK GRID */}
               {loading ? (
                   <div className="flex justify-center items-center h-96">
                     <Spin size="large" tip="Đang tải dữ liệu..." />
@@ -199,23 +267,14 @@ export default function LibrarianBooks({ isAdmin = false }) {
                           <BookCard
                               key={book.bookId || book.id}
                               id={book.bookId || book.id}
-
-                              // BỎ type="librarian" để dùng giao diện Student đẹp hơn (như bạn yêu cầu trước đó)
-                              // type="librarian"
-
                               title={book.bookName || book.title}
                               author={book.author || "Chưa cập nhật"}
                               image={getValidImageUrl(book.imageUrl || book.avatar)}
-
-                              // [QUAN TRỌNG] Truyền list categories vào đây
                               categories={book.categories}
-
                               status={book.quantity > 0 ? "active" : "archived"}
                               code={book.bookId}
                               studentsCount={book.quantity || 0}
                               schedule="Sách in"
-
-                              // Click vào thì chuyển trang quản lý
                               onPreview={() => handleGoToDetail(book.bookId || book.id)}
                           />
                       ))}

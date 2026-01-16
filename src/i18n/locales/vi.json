@@ -82,7 +82,7 @@
     "capNhatThatBai": "Cập nhật thất bại. Vui lòng thử lại.",
     "huy": "Hủy",
     "luuThayDoi": "Lưu thay đổi",
-    "khoaHocCuaToi": "Thư viện sách",
+    "khoaHocCuaToi": "Danh sách sách mượn",
     "thongBao": "Thông báo",
     "chungChiCuaToi": "Chứng chỉ của tôi",
     "lichSuGiaoDich": "Lịch sử giao dịch",
@@ -152,7 +152,7 @@
     "nhapLaiMatKhau": "Nhập lại mật khẩu",
     "vaiTro": "Vai trò",
     "sinhVien": "Sinh viên",
-    "giaoVien": "thủ thư",
+    "giaoVien": "Thủ thư",
     "thoaThuan": "Bằng cách đăng ký, bạn đồng ý với các",
     "đieuKhoanDichVu": "Điều khoản dịch vụ",
     "va": "và",
@@ -177,10 +177,11 @@
   "librarian": {
     "tongQuan": "Tổng quan",
     "quanLyLuotMuon": "Quản lý sách",
-    "quanLySach": "Quản lý học viên",
+    "quanLySach": "Quản lý lượt mượn",
     "baoCoThongKe": "Báo cáo/Thống kê",
     "hoSo": "Hồ sơ",
-    "caiDatHeThong": "Cài đặt hệ thống"
+    "caiDatHeThong": "Cài đặt hệ thống",
+    "quanLyDanhMuc": "Quản lý danh mục"
   },
   "admin": {
     "tongQuan": "Tổng quan",
@@ -188,6 +189,7 @@
     "quanLyLuotMuon": "Quản lý sách",
     "thongKe": "Thống kê",
     "hoSo": "Hồ sơ",
-    "caiDat": "Cài đặt"
+    "caiDat": "Cài đặt",
+    "quanLyDanhMuc": "Quản lý danh mục"
   }
 }

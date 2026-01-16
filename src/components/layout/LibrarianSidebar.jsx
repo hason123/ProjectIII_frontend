@@ -8,8 +8,9 @@ import {
   UserGroupIcon,
   ChartBarIcon,
   Cog6ToothIcon,
-  BellIcon,
+  BellIcon, TagIcon,
 } from "@heroicons/react/24/outline";
+import {BookOutlined} from "@ant-design/icons";
 
 export default function LibrarianSidebar() {
   const { t } = useTranslation();
@@ -37,13 +38,6 @@ export default function LibrarianSidebar() {
     }`}>
       <nav className="flex-1 px-4 py-6 space-y-2">
         <SidebarLink
-          icon={<Squares2X2Icon className="h-6 w-6" />}
-          label={t("librarian.tongQuan")}
-          active={currentPath === "/librarian/dashboard"}
-          to="/librarian/dashboard"
-          isCollapsed={isCollapsed}
-        />
-        <SidebarLink
           icon={<AcademicCapIcon className="h-6 w-6" />}
           label={t("librarian.quanLyLuotMuon")}
           active={currentPath.startsWith("/librarian/books")}
@@ -53,17 +47,25 @@ export default function LibrarianSidebar() {
         <SidebarLink
           icon={<UserGroupIcon className="h-6 w-6" />}
           label={t("librarian.quanLySach")}
-          active={currentPath === "/librarian/students"}
-          to="/librarian/students"
+          active={currentPath === "/librarian/borrowings"}
+          to="/librarian/borrowings"
           isCollapsed={isCollapsed}
         />
         <SidebarLink
+            icon={<BookOutlined className="h-6 w-6" />}
+            label={t("librarian.quanLyDanhMuc")}
+            // Highlight khi đường dẫn bắt đầu bằng /librarian/categories
+            active={currentPath.startsWith("/librarian/categories")}
+            to="/librarian/categories"
+            isCollapsed={isCollapsed}
+        />
+{/*        <SidebarLink
           icon={<ChartBarIcon className="h-6 w-6" />}
           label={t("librarian.baoCoThongKe")}
           active={currentPath === "/librarian/report"}
           to="/librarian/report"
           isCollapsed={isCollapsed}
-        />
+        />*/}
         <SidebarLink
           icon={<BellIcon className="h-6 w-6" />}
           label={t("common.thongBao")}

@@ -10,6 +10,7 @@ import {
   ChartBarIcon,
   Cog6ToothIcon,
 } from "@heroicons/react/24/outline";
+import { BookOutlined } from "@ant-design/icons";
 
 export default function AdminSidebar() {
   const { t } = useTranslation();
@@ -40,14 +41,14 @@ export default function AdminSidebar() {
         <SidebarLink
           icon={<CheckCircleIcon className="h-6 w-6" />}
           label={t("librarian.quanLySach")}
-          active={currentPath.startsWith("/admin/students")}
-          to="/admin/students"
+          active={currentPath.startsWith("/admin/borrowings")}
+          to="/admin/borrowings"
         />
         <SidebarLink
-          icon={<ChartBarIcon className="h-6 w-6" />}
-          label={t("admin.thongKe")}
-          active={currentPath === "/admin/reports"}
-          to="/admin/reports"
+            icon={<BookOutlined className="h-6 w-6" />}
+            label={t("librarian.quanLyDanhMuc")}
+            active={currentPath.startsWith("/admin/categories")}
+            to="/admin/categories"
         />
         <SidebarLink
           icon={<Cog6ToothIcon className="h-6 w-6" />}

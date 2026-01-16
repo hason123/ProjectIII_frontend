@@ -9,9 +9,6 @@ export default function BookCard({
                                    image,
                                    type = "student",
                                    status,
-                                   code,
-                                   studentsCount,
-                                   schedule,
                                    categories = [], // Nhận mảng categories
                                    onManage,
                                    onEdit,
@@ -46,60 +43,55 @@ export default function BookCard({
     );
   };
 
-  // --- GIAO DIỆN CŨ (Librarian - Nếu bạn còn dùng) ---
   if (type === "librarian") {
-    // ... (Code cũ giữ nguyên hoặc cập nhật tương tự nếu cần)
     return null; // Tạm ẩn để tập trung vào giao diện chính bên dưới
   }
 
-  // --- GIAO DIỆN CHÍNH (Student / Admin Grid) ---
-  return (
-      <div className="flex h-full w-full flex-col rounded-xl bg-white dark:bg-background-dark shadow-sm border border-gray-200 dark:border-gray-800 hover:shadow-lg hover:-translate-y-1 transform transition duration-200 overflow-hidden group">
 
-        {/* 1. Ảnh Bìa */}
-        <div className="relative w-full aspect-[3/4] bg-gray-100 dark:bg-gray-800 overflow-hidden">
-          <img
-              src={image}
-              alt={title}
-              className="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-300"
-          />
-          {/* Tag trạng thái (nếu có) */}
-          {status === 'active' && (
-              <div className="absolute top-2 right-2 bg-green-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm">
-                Sẵn sàng
-              </div>
-          )}
+    return (
+        <div className="flex h-full w-full flex-col rounded-xl bg-white dark:bg-background-dark shadow-sm border border-gray-200 dark:border-gray-800 hover:shadow-lg hover:-translate-y-1 transform transition duration-200 overflow-hidden group">
+
+            {/* 1. Ảnh Bìa */}
+            <div className="relative w-full aspect-[3/4] bg-gray-100 dark:bg-gray-800 overflow-hidden">
+                <img
+                    src={image}
+                    alt={title}
+                    className="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-300"
+                />
+                {status === 'active' && (
+                    <div className="absolute top-2 right-2 bg-green-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm">
+                        Sẵn sàng
+                    </div>
+                )}
+            </div>
+
+            <div className="flex flex-col flex-1 p-4 pt-3">
+
+                <div className="flex flex-col">
+                    {renderCategories()}
+
+                    <h3
+                        className="text-[15px] font-bold leading-snug text-[#111418] dark:text-white line-clamp-2 mb-0.5"
+                        title={title}
+                    >
+                        {title}
+                    </h3>
+                    <p className="text-xs font-medium text-slate-500 dark:text-slate-400 truncate">
+                        {author || "Chưa cập nhật tác giả"}
+                    </p>
+                </div>
+
+                <div className="flex-1 min-h-[12px]"></div>
+
+                <button
+                    onClick={onPreview ? onPreview : () => navigate(`/books/${id}`)}
+                    className="w-full h-9 rounded-lg border border-gray-200 dark:border-gray-700 flex items-center justify-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-primary hover:text-white hover:border-primary transition-all duration-200 group-hover:bg-primary group-hover:text-white group-hover:border-primary"
+                >
+                    <span>Xem chi tiết</span>
+                    <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                </button>
+            </div>
         </div>
+    );
 
-        {/* 2. Nội dung */}
-        <div className="flex flex-col flex-1 justify-between p-4 pt-3 gap-2">
-          <div>
-            {/* [MỚI] Categories dạng Tags */}
-            {renderCategories()}
-
-            {/* Tên sách */}
-            <h3
-                className="text-base font-bold leading-tight text-[#111418] dark:text-white line-clamp-2 min-h-[2.5em] mb-1"
-                title={title}
-            >
-              {title}
-            </h3>
-
-            {/* Tác giả */}
-            <p className="text-sm font-normal text-slate-500 dark:text-slate-400 truncate">
-              {author || "Chưa cập nhật tác giả"}
-            </p>
-          </div>
-
-          {/* Nút Xem chi tiết */}
-          <button
-              onClick={onPreview ? onPreview : () => navigate(`/books/${id}`)}
-              className="mt-auto w-full h-9 rounded-lg border border-gray-200 dark:border-gray-700 flex items-center justify-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-primary hover:text-white hover:border-primary transition-all duration-200 group-hover:bg-primary group-hover:text-white group-hover:border-primary"
-          >
-            <span>Xem chi tiết</span>
-            <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-          </button>
-        </div>
-      </div>
-  );
 }

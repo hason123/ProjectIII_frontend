@@ -2,20 +2,31 @@ import React, { useState, useEffect } from "react";
 import LibrarianHeader from "../../components/layout/LibrarianHeader";
 import LibrarianSidebar from "../../components/layout/LibrarianSidebar";
 import AdminSidebar from "../../components/layout/AdminSidebar";
-import { Table, Input, Select, Button, Space, Tag, Modal, Spin, message } from "antd";
+// 1. Thêm DatePicker, Form vào imports
+import { Table, Input, Select, Button, Space, Tag, Modal, message, DatePicker, Form } from "antd";
 import {
   SearchOutlined,
   CheckOutlined,
   CloseOutlined,
   DeleteOutlined,
-  ReloadOutlined
+  ReloadOutlined,
+  // 2. Thêm Icons mới
+  EditOutlined,
+  RollbackOutlined
 } from "@ant-design/icons";
-import {getBorrowingPage, approveBorrowing, rejectBorrowing, deleteBorrowing, getAllBooks} from "../../api/book";
+import {
+  getBorrowingPage,
+  approveBorrowing,
+  rejectBorrowing,
+  deleteBorrowing,
+  // 3. Import API update
+  updateBorrowing
+} from "../../api/book";
+import dayjs from "dayjs"; // Cần cài dayjs nếu dùng Antd v5 (thường có sẵn)
 
 export default function LibrarianBorrowingManagement({ isAdmin = false }) {
-  const [selectedRows, setSelectedRows] = useState([]);
   const [searchText, setSearchText] = useState("");
-  const [statusFilter, setStatusFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState(null);
   const [borrowings, setBorrowings] = useState([]);
   const [loading, setLoading] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -25,7 +36,12 @@ export default function LibrarianBorrowingManagement({ isAdmin = false }) {
   const [totalItems, setTotalItems] = useState(0);
   const pageSize = 10;
 
-  // Xử lý responsive sidebar
+  // --- STATE CHO MODAL UPDATE (Trả sách / Sửa ngày) ---
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalType, setModalType] = useState(""); // "RETURN" hoặc "EDIT_DATE"
+  const [currentRecord, setCurrentRecord] = useState(null);
+  const [form] = Form.useForm();
+
   useEffect(() => {
     const handleResize = () => setSidebarCollapsed(window.innerWidth < 1024);
     handleResize();
@@ -33,17 +49,24 @@ export default function LibrarianBorrowingManagement({ isAdmin = false }) {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Fetch dữ liệu mượn sách
-  // Tìm đến hàm fetchBorrowings và sửa đoạn lấy dataList và totalItems
+  const calculateDueDate = (dateString, daysToAdd = 30) => {
+    if (!dateString) return null;
+    const date = new Date(dateString);
+    date.setDate(date.getDate() + daysToAdd);
+    return date;
+  };
+
+  const formatDate = (date) => {
+    if (!date) return "-";
+    return new Date(date).toLocaleDateString("vi-VN");
+  };
 
   const fetchBorrowings = async () => {
     try {
       setLoading(true);
       const res = await getBorrowingPage(currentPage, pageSize);
-
-      // --- SỬA Ở ĐÂY ---
-      // Dữ liệu API bọc trong thuộc tính "data", nên phải truy cập res.data.pageList
       const dataList = res.data?.pageList || [];
+
       const mappedData = dataList.map((item) => ({
         key: item.borrowingId,
         id: item.borrowingId,
@@ -58,10 +81,7 @@ export default function LibrarianBorrowingManagement({ isAdmin = false }) {
       }));
 
       setBorrowings(mappedData);
-      // Sửa cả phần lấy tổng số trang/phần tử
       setTotalItems(res.data?.totalElements || 0);
-      // ----------------
-
     } catch (err) {
       console.error("Lỗi tải dữ liệu mượn:", err);
       message.error("Không thể tải danh sách mượn trả sách");
@@ -73,10 +93,8 @@ export default function LibrarianBorrowingManagement({ isAdmin = false }) {
   useEffect(() => {
     fetchBorrowings();
   }, [currentPage]);
-  // Lưu ý: API Java hiện tại (getBorrowingPage) chỉ có phân trang, chưa có filter server-side
-  // nên việc filter Status/Tên sách sẽ thực hiện ở client trên trang hiện tại hoặc cần update API Backend.
 
-  // --- HÀNH ĐỘNG: DUYỆT (APPROVE) ---
+  // --- HÀNH ĐỘNG CŨ ---
   const handleApprove = (borrowingId, userId, bookId) => {
     Modal.confirm({
       title: "Duyệt yêu cầu mượn",
@@ -86,12 +104,9 @@ export default function LibrarianBorrowingManagement({ isAdmin = false }) {
       okButtonProps: { type: "primary" },
       async onOk() {
         try {
-          // Gọi API approveBorrowing
-          // Lưu ý: API yêu cầu Request Body { userId, bookId } tương ứng BorrowingRequest Java
           await approveBorrowing(userId, bookId);
-
           message.success("Đã duyệt yêu cầu mượn thành công!");
-          fetchBorrowings(); // Reload lại bảng
+          fetchBorrowings();
         } catch (err) {
           message.error(err.message || "Lỗi khi duyệt yêu cầu");
         }
@@ -99,11 +114,10 @@ export default function LibrarianBorrowingManagement({ isAdmin = false }) {
     });
   };
 
-  // --- HÀNH ĐỘNG: TỪ CHỐI (REJECT) ---
   const handleReject = (borrowingId, userId, bookId) => {
     Modal.confirm({
       title: "Từ chối yêu cầu",
-      content: "Bạn có chắc chắn muốn từ chối yêu cầu này? Sách sẽ được trả lại kho.",
+      content: "Từ chối yêu cầu này?",
       okText: "Từ chối",
       cancelText: "Hủy",
       okButtonProps: { type: "primary", danger: true },
@@ -119,11 +133,10 @@ export default function LibrarianBorrowingManagement({ isAdmin = false }) {
     });
   };
 
-  // --- HÀNH ĐỘNG: XÓA (DELETE) ---
   const handleDelete = (borrowingId) => {
     Modal.confirm({
       title: "Xóa bản ghi",
-      content: "Hành động này sẽ xóa hoàn toàn lịch sử mượn này. Bạn có chắc không?",
+      content: "Hành động này sẽ xóa hoàn toàn lịch sử mượn này.",
       okText: "Xóa",
       cancelText: "Hủy",
       okButtonProps: { type: "primary", danger: true },
@@ -139,24 +152,67 @@ export default function LibrarianBorrowingManagement({ isAdmin = false }) {
     });
   };
 
-  // --- XỬ LÝ LỌC CLIENT-SIDE (Do API Backend chưa hỗ trợ filter) ---
+  // --- XỬ LÝ MODAL UPDATE ---
+
+  // 1. Mở modal Trả sách
+  const openReturnModal = (record) => {
+    setModalType("RETURN");
+    setCurrentRecord(record);
+    form.setFieldsValue({
+      actionDate: dayjs(), // Mặc định là hôm nay
+    });
+    setIsModalOpen(true);
+  };
+
+  // 2. Mở modal Sửa ngày mượn
+  const openEditDateModal = (record) => {
+    setModalType("EDIT_DATE");
+    setCurrentRecord(record);
+    form.setFieldsValue({
+      actionDate: record.borrowDate ? dayjs(record.borrowDate) : dayjs(),
+    });
+    setIsModalOpen(true);
+  };
+
+  // 3. Submit Modal
+  const handleModalOk = async () => {
+    try {
+      const values = await form.validateFields();
+      const dateValue = values.actionDate.format("YYYY-MM-DD");
+
+      let payload = {};
+      if (modalType === "RETURN") {
+        payload = { returnDate: dateValue };
+      } else if (modalType === "EDIT_DATE") {
+        payload = { borrowingDate: dateValue };
+      }
+
+      await updateBorrowing(currentRecord.id, payload);
+
+      message.success(modalType === "RETURN" ? "Đã xác nhận trả sách!" : "Đã cập nhật ngày mượn!");
+      setIsModalOpen(false);
+      fetchBorrowings();
+    } catch (err) {
+      console.error(err);
+      message.error(err.message || "Có lỗi xảy ra khi cập nhật");
+    }
+  };
+
   const filteredData = borrowings.filter((item) => {
     const matchSearch =
         item.fullName?.toLowerCase().includes(searchText.toLowerCase()) ||
         item.bookName?.toLowerCase().includes(searchText.toLowerCase());
-
     const matchStatus = statusFilter ? item.status === statusFilter : true;
-
     return matchSearch && matchStatus;
   });
 
-  // --- CẤU HÌNH CỘT BẢNG ---
   const columns = [
     {
       title: "Người dùng",
       dataIndex: "fullName",
       key: "fullName",
-      render: (text) => <span className="font-semibold text-[#111418] dark:text-white">{text}</span>,
+      width: 160,
+      render: (text) => <span className="font-semibold text-gray-800 dark:text-gray-200">{text}</span>,
     },
     {
       title: "Sách mượn",
@@ -168,28 +224,36 @@ export default function LibrarianBorrowingManagement({ isAdmin = false }) {
       title: "Ngày mượn",
       dataIndex: "borrowDate",
       key: "borrowDate",
-      render: (date) => date ? new Date(date).toLocaleDateString("vi-VN") : "-",
+      width: 110,
+      align: "center",
+      render: (date) => formatDate(date),
     },
     {
       title: "Hạn trả / Ngày trả",
-      dataIndex: "returnDate",
-      key: "returnDate",
-      render: (date, record) => {
-        // Logic hiển thị: Nếu còn đang mượn thì đây là DueDate, nếu đã trả thì là ReturnDate
-        // Dựa trên backend: convertBorrowingToDTO setBorrowingDate + 30 ngày
-        // Nhưng DTO Java field là 'returnDate' cho ngày đã trả.
-        // Ta có thể tính toán hiển thị dựa trên status
+      key: "returnDateInfo",
+      width: 140,
+      align: "center",
+      render: (_, record) => {
         if (record.status === 'BORROWING' && record.borrowDate) {
-          const dueDate = new Date(new Date(record.borrowDate).setDate(new Date(record.borrowDate).getDate() + 30));
-          return <span className="text-orange-500">Hạn: {dueDate.toLocaleDateString("vi-VN")}</span>
+          const dueDate = calculateDueDate(record.borrowDate, 30);
+          return <span className="text-orange-600 font-medium">Hạn: {formatDate(dueDate)}</span>
         }
-        return date ? new Date(date).toLocaleDateString("vi-VN") : "-";
+        if (record.status === 'RETURNED' && record.returnDate) {
+          return <span className="text-green-600">Đã trả: {formatDate(record.returnDate)}</span>
+        }
+        if (record.status === 'OVERDUE' && record.borrowDate) {
+          const dueDate = calculateDueDate(record.borrowDate, 30);
+          return <span className="text-red-600 font-bold">Hạn: {formatDate(dueDate)}</span>
+        }
+        return <span className="text-gray-400">-</span>;
       },
     },
     {
       title: "Trạng thái",
       dataIndex: "status",
       key: "status",
+      width: 110,
+      align: "center",
       render: (status) => {
         let color = "default";
         let text = status;
@@ -208,42 +272,81 @@ export default function LibrarianBorrowingManagement({ isAdmin = false }) {
       title: "Hành động",
       key: "action",
       align: "right",
+      width: 160, // Tăng width để chứa đủ nút
       render: (_, record) => (
           <Space>
-            {/* Chỉ hiện nút Duyệt/Từ chối khi trạng thái là PENDING */}
+            {/* 1. Nhóm nút cho trạng thái PENDING */}
             {record.status === "PENDING" && (
                 <>
                   <Button
-                      type="primary"
-                      size="small"
+                      type="text"
+                      className="text-green-600 hover:text-green-700 hover:bg-green-50"
                       icon={<CheckOutlined />}
                       onClick={() => handleApprove(record.id, record.userId, record.bookId)}
-                  >
-                    Duyệt
-                  </Button>
+                      title="Duyệt"
+                  />
                   <Button
-                      danger
-                      size="small"
+                      type="text"
+                      className="text-red-500 hover:text-red-700 hover:bg-red-50"
                       icon={<CloseOutlined />}
                       onClick={() => handleReject(record.id, record.userId, record.bookId)}
-                  >
-                    Từ chối
-                  </Button>
+                      title="Từ chối"
+                  />
                 </>
             )}
 
-            {/* Nút xóa cho phép dọn dẹp dữ liệu (Admin only) */}
+            {/* 2. Nhóm nút cho BORROWING / OVERDUE: Trả sách */}
+            {(record.status === "BORROWING" || record.status === "OVERDUE") && (
+                <Button
+                    type="primary"
+                    size="small"
+                    ghost
+                    icon={<RollbackOutlined />}
+                    onClick={() => openReturnModal(record)}
+                >
+                  Trả sách
+                </Button>
+            )}
+
+            {/* 3. Nhóm nút cho BORROWING: Sửa ngày mượn */}
+            {record.status === "BORROWING" && (
+                <Button
+                    type="text"
+                    icon={<EditOutlined />}
+                    onClick={() => openEditDateModal(record)}
+                    title="Sửa ngày mượn"
+                />
+            )}
+
+            {/* 4. Nút Xóa (Luôn hiện hoặc chỉ hiện khi đã trả/hủy) */}
             <Button
                 type="text"
                 danger
                 icon={<DeleteOutlined />}
                 onClick={() => handleDelete(record.id)}
-                title="Xóa lịch sử"
+                title="Xóa"
             />
           </Space>
       ),
     },
   ];
+
+  const disabledDate = (current) => {
+    // 1. Nếu đang ở màn hình TRẢ SÁCH (RETURN)
+    if (modalType === "RETURN" && currentRecord?.borrowDate) {
+      // Không được chọn ngày TRƯỚC ngày mượn
+      // current < borrowDate (start of day)
+      return current && current < dayjs(currentRecord.borrowDate).startOf('day');
+    }
+
+    // 2. Nếu đang ở màn hình SỬA NGÀY MƯỢN (EDIT_DATE)
+    if (modalType === "EDIT_DATE") {
+      // Không được chọn ngày trong tương lai (tùy logic bên bạn, thường ngày mượn <= hôm nay)
+      return current && current > dayjs().endOf('day');
+    }
+
+    return false;
+  };
 
   return (
       <div className="min-h-screen bg-background-light dark:bg-background-dark font-display">
@@ -253,7 +356,6 @@ export default function LibrarianBorrowingManagement({ isAdmin = false }) {
           <main className={`flex-1 pt-16 transition-all duration-300 ${sidebarCollapsed ? "pl-20" : "pl-64"}`}>
             <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-7xl mx-auto">
 
-              {/* Page Header */}
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
                 <h1 className="text-2xl md:text-3xl text-[#111418] dark:text-white font-bold">
                   Quản lý mượn trả sách
@@ -263,20 +365,19 @@ export default function LibrarianBorrowingManagement({ isAdmin = false }) {
                 </Button>
               </div>
 
-              {/* Filters */}
-              <div className="mb-6 flex gap-4">
+              <div className="mb-6 flex flex-wrap gap-4">
                 <Input
-                    placeholder="Tìm theo tên người dùng hoặc tên sách..."
+                    placeholder="Tìm theo tên hoặc sách..."
                     prefix={<SearchOutlined />}
                     value={searchText}
                     onChange={(e) => setSearchText(e.target.value)}
-                    style={{ maxWidth: 400 }}
+                    style={{ maxWidth: 300 }}
                 />
                 <Select
-                    placeholder="Trạng thái"
+                    placeholder="Lọc theo trạng thái"
                     value={statusFilter}
                     onChange={setStatusFilter}
-                    style={{ width: 200 }}
+                    style={{ width: 180 }}
                     allowClear
                     options={[
                       { label: "Chờ duyệt", value: "PENDING" },
@@ -288,7 +389,6 @@ export default function LibrarianBorrowingManagement({ isAdmin = false }) {
                 />
               </div>
 
-              {/* Table */}
               <div className="bg-white dark:bg-[#1a2632] rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
                 <Table
                     loading={loading}
@@ -297,14 +397,68 @@ export default function LibrarianBorrowingManagement({ isAdmin = false }) {
                     pagination={{
                       current: currentPage,
                       pageSize: pageSize,
-                      total: totalItems, // Tổng số bản ghi từ Server
+                      total: totalItems,
                       onChange: (page) => setCurrentPage(page),
                       showTotal: (total) => `Tổng ${total} yêu cầu`,
+                      showSizeChanger: false
                     }}
                     scroll={{ x: 1000 }}
                     rowKey="id"
                 />
               </div>
+
+              {/* MODAL UPDATE (Dùng chung cho Trả sách & Sửa ngày) */}
+              <Modal
+                  title={modalType === "RETURN" ? "Xác nhận trả sách" : "Cập nhật ngày mượn"}
+                  open={isModalOpen}
+                  onOk={handleModalOk}
+                  onCancel={() => setIsModalOpen(false)}
+                  okText={modalType === "RETURN" ? "Xác nhận trả" : "Lưu thay đổi"}
+                  cancelText="Hủy bỏ"
+              >
+                <Form form={form} layout="vertical" className="mt-4">
+                  {/* Hiển thị thông tin tóm tắt để user đỡ nhầm */}
+                  <div className="mb-4 p-3 bg-gray-50 dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700">
+                    <p className="text-sm"><strong>Người mượn:</strong> {currentRecord?.fullName}</p>
+                    <p className="text-sm"><strong>Sách:</strong> {currentRecord?.bookName}</p>
+                    {modalType === "RETURN" && (
+                        <p className="text-sm text-blue-600">
+                          <strong>Ngày mượn:</strong> {formatDate(currentRecord?.borrowDate)}
+                        </p>
+                    )}
+                  </div>
+
+                  <Form.Item
+                      name="actionDate"
+                      label={modalType === "RETURN" ? "Ngày trả sách" : "Ngày bắt đầu mượn"}
+                      rules={[
+                        { required: true, message: "Vui lòng chọn ngày!" },
+                        // Validate bổ sung nếu cần
+                      ]}
+                  >
+                    <DatePicker
+                        className="w-full"
+                        format="DD/MM/YYYY"
+                        placeholder="Chọn ngày"
+                        // Thêm dòng này để chặn ngày sai
+                        disabledDate={disabledDate}
+                        // Mặc định không cho chọn quá xa trong quá khứ nếu cần (optional)
+                    />
+                  </Form.Item>
+
+                  {modalType === "RETURN" && (
+                      <div className="text-gray-500 text-xs italic space-y-1">
+                        <p>* Ngày trả không được nhỏ hơn ngày mượn.</p>
+                        <p>* Sách sẽ được cộng lại vào kho (+1 quantity).</p>
+                      </div>
+                  )}
+                  {modalType === "EDIT_DATE" && (
+                      <div className="text-gray-500 text-xs italic">
+                        * Hạn trả mới sẽ được tự động tính lại (Ngày mượn mới + 30 ngày).
+                      </div>
+                  )}
+                </Form>
+              </Modal>
             </div>
           </main>
         </div>

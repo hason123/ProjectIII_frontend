@@ -4,6 +4,13 @@ const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8081';
 
 const API_URL = `${BACKEND_URL}/api/v1/library`;
 
+const getAuthHeaders = () => {
+  const token = localStorage.getItem("accessToken");
+  return {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  };
+};
 export async function getAllBooks(pageNumber = 1, pageSize = 10) {
   const token = localStorage.getItem("accessToken");
   const response = await fetch(
@@ -98,6 +105,26 @@ export async function getLibrarianBooks(pageNumber = 1, pageSize = 10) {
   return await response.json();
 }
 
+export async function getBooksBorrowingStudent(pageNumber = 1, pageSize = 10) {
+  const token = localStorage.getItem("accessToken");
+  const response = await fetch(
+      `${API_URL}/books/user/borrowing?pageNumber=${pageNumber}&pageSize=${pageSize}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch borrowing books");
+  }
+
+  return await response.json();
+}
+
 export async function getApprovedBooks(pageNumber = 1, pageSize = 10) {
   const token = localStorage.getItem("accessToken");
   const response = await fetch(
@@ -179,7 +206,7 @@ export async function uploadBookImage(bookId, file) {
   const formData = new FormData();
   formData.append("file", file);
 
-  const response = await fetch(`${API_URL}/books/${bookId}/avatar`, {
+  const response = await fetch(`${API_URL}/books/${bookId}/image`, {
     method: "PUT",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -285,107 +312,10 @@ export async function importBook(file) {
   return await response.json();
 }
 
-export async function publishBook(id) {
-  const token = localStorage.getItem("accessToken");
-  const response = await fetch(`${API_URL}/books/${id}/publish`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-  });
 
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.message || "Failed to publish book");
-  }
 
-  return await response.json();
-}
 
-export async function enrollBook(bookId) {
-  const token = localStorage.getItem("accessToken");
-  const response = await fetch(`${API_URL}/books/${bookId}/enroll`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-  });
 
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.message || "Failed to enroll in book");
-  }
-
-  return await response.json();
-}
-
-export async function checkEnrollmentStatus(bookId) {
-  const token = localStorage.getItem("accessToken");
-  const response = await fetch(`${API_URL}/books/${bookId}/enrollment-status`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  return await response.json();
-
-  // if (!response.ok) {
-  //   // If endpoint doesn't exist or error, return false (not enrolled)
-  //   return false;
-  // }
-
-  // const data = await response.json();
-  // return data.enrolled || data.isEnrolled || false;
-}
-
-export async function getAllEnrollments(pageNumber = 1, pageSize = 10) {
-  const token = localStorage.getItem("accessToken");
-  const response = await fetch(
-    `${API_URL}/enrollments?pageNumber=${pageNumber}&pageSize=${pageSize}`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
-
-  if (!response.ok) {
-    throw new Error("Failed to fetch all enrollments");
-  }
-
-  return await response.json();
-}
-
-export async function getLibrarianEnrollments(pageNumber = 1, pageSize = 10, bookId = null, approvalStatus = null) {
-  const token = localStorage.getItem("accessToken");
-  const params = new URLSearchParams();
-  params.append("pageNumber", pageNumber);
-  params.append("pageSize", pageSize);
-  if (bookId) params.append("bookId", bookId);
-  if (approvalStatus) params.append("approvalStatus", approvalStatus);
-
-  const response = await fetch(
-    `${API_URL}/librarian/enrollments?${params.toString()}`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
-
-  if (!response.ok) {
-    throw new Error("Failed to fetch librarian enrollments");
-  }
-
-  return await response.json();
-}
 
 export async function getBookEnrollments(bookId, pageNumber = 1, pageSize = 10) {
   const token = localStorage.getItem("accessToken");
@@ -407,170 +337,7 @@ export async function getBookEnrollments(bookId, pageNumber = 1, pageSize = 10) 
   return await response.json();
 }
 
-export async function approveEnrollment(userId, bookId) {
-  const token = localStorage.getItem("accessToken");
-  const response = await fetch(
-    `${API_URL}/enrollments/approve`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        studentId,
-        bookId,
-      }),
-    }
-  );
 
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.message || "Failed to approve enrollment");
-  }
-
-  return await response.json();
-}
-
-export async function rejectEnrollment(userId, bookId) {
-  const token = localStorage.getItem("accessToken");
-  const response = await fetch(
-    `${API_URL}/enrollments/reject`,
-    {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        studentId,
-        bookId,
-      }),
-    }
-  );
-
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.message || "Failed to reject enrollment");
-  }
-
-  return await response.json();
-}
-
-export async function deleteEnrollment(enrollmentId) {
-  const token = localStorage.getItem("accessToken");
-  const response = await fetch(
-    `${API_URL}/enrollments/${enrollmentId}`,
-    {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
-
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.message || "Failed to delete enrollment");
-  }
-
-  return await response.json();
-}
-
-export async function deleteStudentsFromBook(bookId, studentIds) {
-  const token = localStorage.getItem("accessToken");
-  const response = await fetch(
-    `${API_URL}/books/${bookId}/students`,
-    {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        studentIds: studentIds,
-      }),
-    }
-  );
-
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.message || "Failed to delete students from book");
-  }
-
-  // Response might be plain text or JSON, handle both cases
-  const contentType = response.headers.get("content-type");
-  if (contentType && contentType.includes("application/json")) {
-    return await response.json();
-  } else {
-    return { message: await response.text() };
-  }
-}
-
-export async function getStudentsNotInBook(bookId, searchRequest = {}, pageNumber = 1, pageSize = 10) {
-  const token = localStorage.getItem("accessToken");
-  const params = new URLSearchParams({
-    pageNumber,
-    pageSize,
-    ...(searchRequest.fullName && { fullName: searchRequest.fullName }),
-    ...(searchRequest.username && { username: searchRequest.username }),
-    ...(searchRequest.email && { email: searchRequest.email }),
-  });
-
-  const response = await fetch(
-    `${API_URL}/books/${bookId}/students/not-available?${params.toString()}`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
-
-  if (!response.ok) {
-    throw new Error("Failed to fetch available students");
-  }
-
-  return await response.json();
-}
-
-export async function addStudentsToBook(bookId, studentIds) {
-  const token = localStorage.getItem("accessToken");
-  const response = await fetch(
-      `${API_URL}/books/${bookId}/students`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          studentIds: studentIds,
-        }),
-      }
-  );
-
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.message || "Failed to add students to book");
-  }
-
-  // Response might be plain text or JSON, handle both cases
-  const contentType = response.headers.get("content-type");
-  if (contentType && contentType.includes("application/json")) {
-    return await response.json();
-  } else {
-    return {message: await response.text()};
-  }
-}
-  /* --- QUẢN LÝ MƯỢN SÁCH (BORROWING MANAGEMENT) --- */
-
-  /**
-   * Sinh viên gửi yêu cầu mượn sách
-   * Controller: @PostMapping("/books/{bookId}/borrow")
-   */
   export async function requestBorrowing(bookId) {
     const token = localStorage.getItem("accessToken");
     const response = await fetch(`${API_URL}/books/${bookId}/borrow`, {
@@ -589,10 +356,6 @@ export async function addStudentsToBook(bookId, studentIds) {
     return await response.json();
   }
 
-  /**
-   * Thủ thư duyệt yêu cầu mượn sách
-   * Controller: @PostMapping("/borrowings/approve")
-   */
   export async function approveBorrowing(userId, bookId) {
     const token = localStorage.getItem("accessToken");
     const response = await fetch(`${API_URL}/borrowings/approve`, {
@@ -615,10 +378,6 @@ export async function addStudentsToBook(bookId, studentIds) {
     return await response.json();
   }
 
-  /**
-   * Thủ thư từ chối yêu cầu mượn sách
-   * Controller: @DeleteMapping("/borrowings/reject")
-   */
   export async function rejectBorrowing(userId, bookId) {
     const token = localStorage.getItem("accessToken");
     const response = await fetch(`${API_URL}/borrowings/reject`, {
@@ -643,10 +402,7 @@ export async function addStudentsToBook(bookId, studentIds) {
     return await response.json();
   }
 
-  /**
-   * Lấy chi tiết một lượt mượn sách
-   * Controller: @GetMapping("/borrowings/{id}")
-   */
+
   export async function getBorrowingDetail(id) {
     const token = localStorage.getItem("accessToken");
     const response = await fetch(`${API_URL}/borrowings/${id}`, {
@@ -664,10 +420,7 @@ export async function addStudentsToBook(bookId, studentIds) {
     return await response.json();
   }
 
-  /**
-   * Lấy danh sách tất cả lượt mượn (Dành cho Thủ thư/Admin)
-   * Controller: @GetMapping("/borrowings")
-   */
+
   export async function getBorrowingPage(pageNumber = 1, pageSize = 10) {
     const token = localStorage.getItem("accessToken");
     const response = await fetch(
@@ -688,10 +441,7 @@ export async function addStudentsToBook(bookId, studentIds) {
     return await response.json();
   }
 
-  /**
-   * Xóa một lượt mượn sách
-   * Controller: @DeleteMapping("/borrowings/{id}")
-   */
+
   export async function deleteBorrowing(id) {
     const token = localStorage.getItem("accessToken");
     const response = await fetch(`${API_URL}/borrowings/${id}`, {
@@ -708,5 +458,20 @@ export async function addStudentsToBook(bookId, studentIds) {
     }
 
     if (response.status === 204) return true;
+    return await response.json();
+  }
+
+  export async function updateBorrowing(id, borrowingRequest) {
+    const response = await fetch(`${API_URL}/borrowings/${id}`, {
+      method: "POST", // Lưu ý: Backend Java dùng @PostMapping
+      headers: getAuthHeaders(),
+      body: JSON.stringify(borrowingRequest),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || "Không thể cập nhật phiếu mượn");
+    }
+
     return await response.json();
   }

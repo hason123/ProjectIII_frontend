@@ -7,18 +7,11 @@ import Home from "./pages/student/Home";
 import BooksPage from "./pages/common/BooksPage";
 import BookDetailPage from "./pages/common/BookDetailPage";
 import NotificationsPage from "./pages/common/NotificationsPage";
-import QuizAttempt from "./pages/student/QuizAttempt";
-import QuizResult from "./pages/student/QuizResult";
-import QuizDetail from "./pages/student/QuizDetail";
-import LibrarianQuizDetail from "./pages/librarian/QuizDetail";
-import StudentLectureDetail from "./pages/student/StudentLectureDetail";
 import ProfilePage from "./pages/student/ProfilePage";
 import LibrarianDashboard from "./pages/librarian/LibrarianDashboard";
 import LibrarianReport from "./pages/librarian/LibrarianReport";
 import LibrarianBooks from "./pages/librarian/LibrarianBooks";
 import CreateBook from "./pages/librarian/CreateBook";
-import CreateChapter from "./pages/librarian/CreateChapter";
-import LectureDetail from "./pages/librarian/LectureDetail";
 import LibrarianProfilePage from "./pages/librarian/LibrarianProfilePage";
 import LibrarianSettingsPage from "./pages/librarian/LibrarianSettingsPage";
 import LibrarianBorrowingManagement from "./pages/librarian/LibrarianBorrowingManagement";
@@ -27,6 +20,8 @@ import AdminUserManagement from "./pages/admin/AdminUserManagement";
 import AdminProfilePage from "./pages/admin/AdminProfilePage";
 import AdminSettingsPage from "./pages/admin/AdminSettingsPage";
 import ProtectedRoute from "./components/common/ProtectedRoute";
+import CreateCategory from "./pages/librarian/CreateCategory";
+import LibrarianCategoriesList from "./pages/librarian/LibrarianCategoriesList";
 
 const GOOGLE_CLIENT_ID =
   import.meta.env.VITE_GOOGLE_CLIENT_ID || "YOUR_GOOGLE_CLIENT_ID_HERE";
@@ -47,7 +42,7 @@ function RootRedirect() {
 
   // Redirect based on user role
   if (user?.role === "LIBRARIAN") {
-    return <Navigate to="/librarian/dashboard" replace />;
+    return <Navigate to="/librarian/books" replace />;
   }
 
   if (user?.role === "ADMIN") {
@@ -135,43 +130,6 @@ function App() {
               />
             }
           />
-          <Route
-            path="/books/:bookId/quizzes/:id/attempt"
-            element={
-              <ProtectedRoute
-                element={<QuizAttempt />}
-                allowedRoles={["USER"]}
-              />
-            }
-          />
-          <Route
-            path="/books/:bookId/quizzes/:id/detail"
-            element={
-              <ProtectedRoute
-                element={<QuizDetail />}
-                allowedRoles={["USER"]}
-              />
-            }
-          />
-          <Route
-            path="/books/:bookId/lectures/:lectureId"
-            element={
-              <ProtectedRoute
-                element={<StudentLectureDetail />}
-                allowedRoles={["USER"]}
-              />
-            }
-          />
-          <Route
-            path="/books/:bookId/quizzes/:id/result"
-            element={
-              <ProtectedRoute
-                element={<QuizResult />}
-                allowedRoles={["USER"]}
-              />
-            }
-          />
-
           {/* Public/Auth Routes */}
           <Route path="/login" element={<AuthPage defaultTab="login" />} />
           <Route
@@ -262,71 +220,8 @@ function App() {
               />
             }
           />
-          {/*<Route
-            path="/librarian/books/:bookId/chapters/create"
-            element={
-              <ProtectedRoute
-                element={<CreateChapter />}
-                allowedRoles={["LIBRARIAN"]}
-              />
-            }
-          />*/}
-          {/*<Route
-            path="/librarian/books/:bookId/lectures/create"
-            element={
-              <ProtectedRoute
-                element={<LectureDetail />}
-                allowedRoles={["LIBRARIAN"]}
-              />
-            }
-          />
           <Route
-            path="/librarian/books/:bookId/chapters/:chapterId/lectures/create"
-            element={
-              <ProtectedRoute
-                element={<LectureDetail />}
-                allowedRoles={["LIBRARIAN"]}
-              />
-            }
-          />
-          <Route
-            path="/librarian/books/:bookId/lectures/:lectureId"
-            element={
-              <ProtectedRoute
-                element={<LectureDetail />}
-                allowedRoles={["LIBRARIAN"]}
-              />
-            }
-          />
-          <Route
-            path="/librarian/books/:bookId/quizzes/create"
-            element={
-              <ProtectedRoute
-                element={<LibrarianQuizDetail />}
-                allowedRoles={["LIBRARIAN"]}
-              />
-            }
-          />
-          <Route
-            path="/librarian/books/:bookId/chapters/:chapterId/quizzes/create"
-            element={
-              <ProtectedRoute
-                element={<LibrarianQuizDetail />}
-                allowedRoles={["LIBRARIAN"]}
-              />
-            }
-          />
-          <Route
-            path="/librarian/books/:bookId/quizzes/:quizId"
-            element={
-              <ProtectedRoute
-                element={<LibrarianQuizDetail />}
-                allowedRoles={["LIBRARIAN"]}
-              />
-            }
-          />*/}
-          <Route
-            path="/librarian/students"
+            path="/librarian/borrowings"
             element={
               <ProtectedRoute
                 element={<LibrarianBorrowingManagement />}
@@ -334,6 +229,35 @@ function App() {
               />
             }
           />
+            <Route
+                path="/librarian/categories"
+                element={
+                    <ProtectedRoute
+                        element={<LibrarianCategoriesList />} // Nên đổi thành LibrarianCategoriesList.jsx sau này
+                        allowedRoles={["LIBRARIAN"]}
+                    />
+                }
+            />
+            {/* Route Tạo mới */}
+            <Route
+                path="/librarian/categories/create"
+                element={
+                    <ProtectedRoute
+                        element={<CreateCategory />}
+                        allowedRoles={["LIBRARIAN"]}
+                    />
+                }
+            />
+            {/* Route Chỉnh sửa */}
+            <Route
+                path="/librarian/categories/edit/:id"
+                element={
+                    <ProtectedRoute
+                        element={<CreateCategory />}
+                        allowedRoles={["LIBRARIAN"]}
+                    />
+                }
+            />
           <Route
             path="/librarian/profile"
             element={
@@ -352,6 +276,7 @@ function App() {
               />
             }
           />
+
 
           {/* Admin Routes */}
           <Route
@@ -426,71 +351,35 @@ function App() {
               />
             }
           />
+            <Route
+                path="/admin/categories"
+                element={
+                    <ProtectedRoute
+                        element={<LibrarianCategoriesList />}
+                        allowedRoles={["ADMIN"]}
+                    />
+                }
+            />
+            <Route
+                path="/admin/categories/create"
+                element={
+                    <ProtectedRoute
+                        element={<CreateCategory />}
+                        allowedRoles={["ADMIN"]}
+                    />
+                }
+            />
+            <Route
+                path="/admin/categories/edit/:id"
+                element={
+                    <ProtectedRoute
+                        element={<CreateCategory />}
+                        allowedRoles={["ADMIN"]}
+                    />
+                }
+            />
           <Route
-            path="/admin/books/:bookId/chapters/create"
-            element={
-              <ProtectedRoute
-                element={<CreateChapter isAdmin={true} />}
-                allowedRoles={["ADMIN"]}
-              />
-            }
-          />
-          <Route
-            path="/admin/books/:bookId/lectures/create"
-            element={
-              <ProtectedRoute
-                element={<LectureDetail isAdmin={true} />}
-                allowedRoles={["ADMIN"]}
-              />
-            }
-          />
-          <Route
-            path="/admin/books/:bookId/chapters/:chapterId/lectures/create"
-            element={
-              <ProtectedRoute
-                element={<LectureDetail isAdmin={true} />}
-                allowedRoles={["ADMIN"]}
-              />
-            }
-          />
-          <Route
-            path="/admin/books/:bookId/lectures/:lectureId"
-            element={
-              <ProtectedRoute
-                element={<LectureDetail isAdmin={true} />}
-                allowedRoles={["ADMIN"]}
-              />
-            }
-          />
-          <Route
-            path="/admin/books/:bookId/quizzes/create"
-            element={
-              <ProtectedRoute
-                element={<LibrarianQuizDetail isAdmin={true} />}
-                allowedRoles={["ADMIN"]}
-              />
-            }
-          />
-          <Route
-            path="/admin/books/:bookId/chapters/:chapterId/quizzes/create"
-            element={
-              <ProtectedRoute
-                element={<LibrarianQuizDetail isAdmin={true} />}
-                allowedRoles={["ADMIN"]}
-              />
-            }
-          />
-          <Route
-            path="/admin/books/:bookId/quizzes/:quizId"
-            element={
-              <ProtectedRoute
-                element={<LibrarianQuizDetail isAdmin={true} />}
-                allowedRoles={["ADMIN"]}
-              />
-            }
-          />
-          <Route
-            path="/admin/students"
+            path="/admin/borrowings"
             element={
               <ProtectedRoute
                 element={<LibrarianBorrowingManagement isAdmin={true} />}

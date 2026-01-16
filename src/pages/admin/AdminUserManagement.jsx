@@ -197,7 +197,7 @@ export default function AdminUserManagement() {
   const getRoleLabel = (role) => {
     const roleMap = {
       USER: "Sinh viên",
-      LIBRARIAN: "thủ thư",
+      LIBRARIAN: "Thủ thư",
       ADMIN: "Quản trị viên",
     };
     return roleMap[role] || role;
