@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import LibrarianHeader from "../../components/layout/LibrarianHeader";
 import LibrarianSidebar from "../../components/layout/LibrarianSidebar";
 import AdminSidebar from "../../components/layout/AdminSidebar";
-// 1. Thêm DatePicker, Form vào imports
 import { Table, Input, Select, Button, Space, Tag, Modal, message, DatePicker, Form } from "antd";
 import {
   SearchOutlined,
@@ -10,7 +9,6 @@ import {
   CloseOutlined,
   DeleteOutlined,
   ReloadOutlined,
-  // 2. Thêm Icons mới
   EditOutlined,
   RollbackOutlined
 } from "@ant-design/icons";
@@ -22,7 +20,7 @@ import {
   // 3. Import API update
   updateBorrowing
 } from "../../api/book";
-import dayjs from "dayjs"; // Cần cài dayjs nếu dùng Antd v5 (thường có sẵn)
+import dayjs from "dayjs";
 
 export default function LibrarianBorrowingManagement({ isAdmin = false }) {
   const [searchText, setSearchText] = useState("");
@@ -31,12 +29,10 @@ export default function LibrarianBorrowingManagement({ isAdmin = false }) {
   const [loading, setLoading] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
-  // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
   const pageSize = 10;
 
-  // --- STATE CHO MODAL UPDATE (Trả sách / Sửa ngày) ---
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalType, setModalType] = useState(""); // "RETURN" hoặc "EDIT_DATE"
   const [currentRecord, setCurrentRecord] = useState(null);
@@ -152,9 +148,7 @@ export default function LibrarianBorrowingManagement({ isAdmin = false }) {
     });
   };
 
-  // --- XỬ LÝ MODAL UPDATE ---
 
-  // 1. Mở modal Trả sách
   const openReturnModal = (record) => {
     setModalType("RETURN");
     setCurrentRecord(record);

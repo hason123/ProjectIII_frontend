@@ -282,7 +282,7 @@ export default function RegisterForm() {
       </button>
 
       <p className="text-center text-sm text-[#617589] dark:text-gray-400">
-        {t('auth.thoaThuan')} <a className="font-medium text-primary hover:underline" href="#">{t('auth.đieuKhoanDichVu')}</a>.
+        {t('auth.thoaThuan')} <a className="font-medium text-primary hover:underline" href="#">{t('auth.dieuKhoanDichVu')}</a>.
       </p>
 
       {/* OTP Modal */}

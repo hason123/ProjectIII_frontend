@@ -4,45 +4,17 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="dee99b54-34f2-4b85-8eec-343da8dfd5e6" name="Changes" comment="cập nhật giao diện Book">
-      <change afterPath="$PROJECT_DIR$/src/pages/librarian/CreateCategory.jsx" afterDir="false" />
+    <list default="true" id="dee99b54-34f2-4b85-8eec-343da8dfd5e6" name="Changes" comment="80%">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/App.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/book.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/book.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/category.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/category.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/chapter.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/lesson.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/lessonComment.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/quiz.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/resource.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/auth/LoginForm.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/auth/LoginForm.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/auth/OtpModal.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/auth/OtpModal.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/auth/RegisterForm.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/auth/RegisterForm.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/book/BookCard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/book/BookCard.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/book/BookContent.jsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/book/LibrarianTab.jsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/book/ReviewTab.jsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/layout/AdminSidebar.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/layout/AdminSidebar.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/layout/LibrarianSidebar.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/layout/LibrarianSidebar.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/lesson/LessonComments.jsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/librarian/AddStudentModal.jsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/student/profile/MyBooks.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/student/profile/MyBooks.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/student/profile/MyInformation.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/student/profile/MyInformation.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/book/BookFilters.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/book/BookFilters.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/i18n/locales/en.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/i18n/locales/en.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/i18n/locales/vi.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/i18n/locales/vi.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/admin/AdminDashboard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/admin/AdminDashboard.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/admin/AdminUserManagement.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/admin/AdminUserManagement.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/admin/AdminUserModal.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/admin/AdminUserModal.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/librarian/CreateBook.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/librarian/CreateBook.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/librarian/CreateChapter.jsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/librarian/LectureDetail.jsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/librarian/LibrarianBooks.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/librarian/LibrarianBooks.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/pages/librarian/LibrarianBorrowingManagement.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/librarian/LibrarianBorrowingManagement.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/librarian/QuizDetail.jsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/student/QuizAttempt.jsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/student/QuizDetail.jsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/student/QuizResult.jsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/student/StudentLectureDetail.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/librarian/LibrarianDashboard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/librarian/LibrarianDashboard.jsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -111,7 +83,7 @@
       <workItem from="1768466214147" duration="90000" />
       <workItem from="1768466306517" duration="44332000" />
       <workItem from="1768535668877" duration="588000" />
-      <workItem from="1768552345413" duration="9951000" />
+      <workItem from="1768552345413" duration="17126000" />
     </task>
     <task id="LOCAL-00001" summary="cập nhật giao diện Book">
       <option name="closed" value="true" />
@@ -129,7 +101,15 @@
       <option name="project" value="LOCAL" />
       <updated>1768519272534</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="80%">
+      <option name="closed" value="true" />
+      <created>1768562950892</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1768562950892</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -137,6 +117,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="cập nhật giao diện Book" />
-    <option name="LAST_COMMIT_MESSAGE" value="cập nhật giao diện Book" />
+    <MESSAGE value="80%" />
+    <option name="LAST_COMMIT_MESSAGE" value="80%" />
   </component>
 </project>

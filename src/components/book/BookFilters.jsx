@@ -48,30 +48,11 @@ export default function BookFilters({ onFilterChange }) {
     }));
   };
 
-  const handleRatingChange = (e) => {
-    const rating = e.target.value;
-    setFilters(prev => ({ ...prev, rating }));
-  };
-
   const handleApplyFilters = () => {
     if (onFilterChange) {
       onFilterChange(filters);
     }
   };
-
-  const handleReset = () => {
-    const resetState = { bookName: '', author: '', publisher: '', categories: [], rating: null };
-    setFilters(resetState);
-    if (onFilterChange) onFilterChange(resetState);
-  };
-
-  const categoryOptions = categories.map(cat => {
-    const categoryName = cat.categoryName;
-    return {
-      label: categoryName,
-      value: categoryName
-    };
-  });
 
   return (
     <div className="sticky top-24 bg-white dark:bg-gray-800 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700">
@@ -88,7 +69,7 @@ export default function BookFilters({ onFilterChange }) {
         />
       </div>
 
-      {/* Ô Tác Giả - MỚI */}
+
       <div>
         <label className="text-xs font-semibold text-gray-500 uppercase mb-1 block">Tác giả</label>
         <Input
@@ -99,7 +80,7 @@ export default function BookFilters({ onFilterChange }) {
         />
       </div>
 
-      {/* Ô Nhà Xuất Bản - MỚI */}
+
       <div>
         <label className="text-xs font-semibold text-gray-500 uppercase mb-1 block">Nhà xuất bản</label>
         <Input
@@ -110,7 +91,7 @@ export default function BookFilters({ onFilterChange }) {
         />
       </div>
 
-      {/* Danh mục */}
+
       <div>
         <label className="text-xs font-semibold text-gray-500 uppercase mb-1 block">Danh mục</label>
         {loadingCategories ? <Spin size="small" /> : (

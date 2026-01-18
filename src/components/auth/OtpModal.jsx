@@ -38,16 +38,21 @@ export default function OtpModal({
     }
   }, [visible]);
 
+
   const handleOtpChange = (value, index) => {
     // Only allow numbers
     if (!/^\d*$/.test(value)) return;
 
     const newOtp = [...otp];
-    newOtp[index] = value.slice(-1); // Take only last character
+    newOtp[index] = value.slice(-1); // Lấy số cuối cùng vừa nhập
+
+    // --- DÒNG BẠN BỊ THIẾU ---
     setOtp(newOtp);
+    // -------------------------
+
     setError('');
 
-    // Auto move to next input
+    // Tự động focus sang ô tiếp theo nếu đã nhập số
     if (value && index < 5) {
       inputRefs.current[index + 1]?.focus();
     }
@@ -83,7 +88,7 @@ export default function OtpModal({
         // Login user with response data
         loginUser(response.data.accessToken, response.data.user);
 
-        // Delay before redirect to show success message
+
         setTimeout(() => {
           onClose();
           

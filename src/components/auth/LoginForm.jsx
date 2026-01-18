@@ -154,7 +154,7 @@ export default function LoginForm() {
         <p className="text-center text-sm text-[#617589] dark:text-gray-400">
           {t('auth.thoaThuan')}{" "}
           <a className="font-medium text-primary hover:underline" href="#">
-            {t('auth.đieuKhoanDichVu')}
+            {t('auth.dieuKhoanDichVu')}
           </a>{" "}
           {t('auth.va')}{" "}
           <a className="font-medium text-primary hover:underline" href="#">

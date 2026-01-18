@@ -9,7 +9,7 @@ export default function BookCard({
                                    image,
                                    type = "student",
                                    status,
-                                   categories = [], // Nhận mảng categories
+                                   categories = [],
                                    onManage,
                                    onEdit,
                                    onPreview,
